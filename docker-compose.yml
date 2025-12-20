@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  postgres-products:
+    image: postgres:14-alpine
+    container_name: minimanager-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: minimanager_products
+      POSTGRES_USER: minimanager
+      POSTGRES_PASSWORD: minimanager123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      # Volume para persistência dos dados
+      - postgres_data:/var/lib/postgresql/data
+      # Scripts de inicialização (executados apenas na primeira criação)
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - minimanager-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minimanager -d minimanager_products"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Products Microservice
+  # ============================================
+  products-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: minimanager-products-service
+    restart: unless-stopped
+    depends_on:
+      postgres-products:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    environment:
+      # Server Configuration
+      SERVER_PORT: 8082
+      
+      # Database Configuration (usa o nome do service como hostname)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-products:5432/minimanager_products
+      SPRING_DATASOURCE_USERNAME: minimanager
+      SPRING_DATASOURCE_PASSWORD: minimanager123
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      
+      # JPA/Hibernate Configuration
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      
+      # Spring Profile
+      SPRING_PROFILES_ACTIVE: docker
+      
+      # Application Name
+      SPRING_APPLICATION_NAME: minimanager-products-service
+      
+      # Logging
+      LOGGING_LEVEL_BR_COM_MINIMANAGER: DEBUG
+      LOGGING_LEVEL_ORG_HIBERNATE_SQL: DEBUG
+      LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER: TRACE
+    networks:
+      - minimanager-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  minimanager-network:
+    driver: bridge
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  postgres_data:
+    driver: local
