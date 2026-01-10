@@ -6,6 +6,9 @@
 -- Extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Extension for trigram similarity search (text search optimization)
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+
 -- ============================================
 -- TABLE: MERCHANTS
 -- Objetivo: Gerenciar dados dos comerciantes/empresas
@@ -33,6 +36,12 @@ CREATE TABLE merchants (
     
     -- Telefone principal
     phone VARCHAR(20),
+    
+    -- Telefone celular
+    mobile VARCHAR(20),
+    
+    -- Website
+    website VARCHAR(200),
     
     -- Endereço completo
     address_street VARCHAR(200),

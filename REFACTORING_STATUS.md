@@ -10,7 +10,7 @@
 ## 🔄 Mudanças Realizadas
 
 ### 1. **Pacote Renomeado**
-❌ **Antes:** `br.com.xpeducacao.marcelinoneto.desafiofinal.produtos`  
+❌ **Antes:** `br.com.minimanager.products`  
 ✅ **Depois:** `br.com.minimanager.products`
 
 ### 2. **Classes Traduzidas para Inglês**
