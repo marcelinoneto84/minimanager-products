@@ -52,6 +52,11 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// Desabilita a geração do JAR plain (sem dependências)
+tasks.named('jar') {
+    enabled = false
+}
+
 springBoot {
     mainClass = 'br.com.minimanager.products.ProductsServiceApplication'
 }

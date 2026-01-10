@@ -40,7 +40,7 @@ CREATE TABLE merchants (
     address_complement VARCHAR(100),
     address_neighborhood VARCHAR(100),
     address_city VARCHAR(100),
-    address_state CHAR(2),
+    address_state VARCHAR(2),
     address_postal_code VARCHAR(10),
     address_country VARCHAR(3) DEFAULT 'BRA',
     
