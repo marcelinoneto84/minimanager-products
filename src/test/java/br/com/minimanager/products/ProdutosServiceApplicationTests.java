@@ -1,4 +1,4 @@
-package br.com.xpeducacao.marcelinoneto.desafiofinal.produtos;
+package br.com.minimanager.products;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
