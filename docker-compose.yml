@@ -7,12 +7,15 @@ services:
     container_name: minimanager-postgres
     restart: unless-stopped
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: minimanager_products
       POSTGRES_USER: minimanager
       POSTGRES_PASSWORD: minimanager123
       PGDATA: /var/lib/postgresql/data/pgdata
+      # Configurar autenticação MD5 para compatibilidade com clientes antigos
+      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
     volumes:
       # Volume para persistência dos dados
       - postgres_data:/var/lib/postgresql/data
